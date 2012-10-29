@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-在小峰同学的帮助下，终于配好了Otcopress，装ruby的时候遇到了问题。因为mac之前装的是ruby1.87，而otcpress需要1.9以上的版本，只好升级了。但不知为何，使用rvm安装ruby奇慢无比，不知道什么时候能装完，实在忍受不了了，就自己下载了ruby（1.9.3）的源代码，configure make & make install之后，执行gem的时候会报异常：
+在小峰同学的帮助下，终于配好了[Octopress](http://octopress.org)，装ruby的时候遇到了问题。因为mac之前装的是ruby1.87，而Octopress需要1.9以上的版本，只好升级了。但不知为何，使用rvm安装ruby奇慢无比，不知道什么时候能装完，实在忍受不了了，就自己下载了ruby（1.9.3）的源代码，configure make & make install之后，执行gem的时候会报异常：
 
     It seems your ruby installation is missing psych (for YAML output).
 
