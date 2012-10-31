@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: python | 碎片]]></title>
+  <title><![CDATA[Category: Python | 碎片]]></title>
   <link href="http://archiechen.github.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-10-31T18:44:36+08:00</updated>
+  <updated>2012-10-31T18:55:37+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -90,7 +90,7 @@
 </span><span class='line'><span class="s">d.get(&#39;newkey&#39;)</span>
 </span><span class='line'><span class="s">&#39;newvalue&#39;</span>
 </span><span class='line'><span class="s">d[&#39;newkey&#39;]</span>
-</span><span class='line'><span class="s">&#39;newvalue&#39;</span>
+</span><span class='line'><span class="s">&#39;newvalue&#39;&lt;br/&gt;</span>
 </span><span class='line'><span class="s">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="k">class</span> <span class="nc">alwaysdefaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
