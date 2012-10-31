@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>MacOS下安装ruby-1.9.3-p286 - 碎片</title>
+  <meta name="author" content="Archie">
+
+  
+  <meta name="description" content="在小峰同学的帮助下，终于配好了Octopress，装ruby的时候遇到了问题。因为mac之前装的是ruby1.87，而Octopress需要1.9以上的版本，只好升级了。但不知为何，使用rvm安装ruby奇慢无比，不知道什么时候能装完，实在忍受不了了，就自己下载了ruby（1.9.3）的源代码， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://archiechen.github.com/blog/2012/10/29/macosxia-an-zhuang-ruby-1-dot-9-3-p286/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="碎片" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">碎片</a></h1>
+  
+    <h2>记录点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:archiechen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">MacOS下安装ruby-1.9.3-p286</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-29T17:34:00+08:00" pubdate data-updated="true">Oct 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在小峰同学的帮助下，终于配好了<a href="http://octopress.org">Octopress</a>，装ruby的时候遇到了问题。因为mac之前装的是ruby1.87，而Octopress需要1.9以上的版本，只好升级了。但不知为何，使用rvm安装ruby奇慢无比，不知道什么时候能装完，实在忍受不了了，就自己下载了ruby（1.9.3）的源代码，configure make &amp; make install之后，执行gem的时候会报异常：</p>
+
+<pre><code>It seems your ruby installation is missing psych (for YAML output).
+</code></pre>
+
+<p>google了一下，需要安装yaml的包，于是下载之：</p>
+
+<pre><code>wget http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz
+</code></pre>
+
+<p>安装之后，有重新ruby，但执行gem仍然报同样的错误，又仔细搜索了一下google，找到一篇文章《<a href="http://collectiveidea.com/blog/archives/2011/10/31/install-ruby-193-with-libyaml-on-centos/">Install Ruby 1.9.3 with libyaml on CentOS</a>》,发现做法是一样的，只是执行configure时需要指定参数，而我使用的都是默认值，虽然指定的和默认值是一样的。按照文中的做法操作之后，成功了！</p>
+
+<pre><code>$ wget http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz
+$ tar xzvf yaml-0.1.4.tar.gz
+$ cd yaml-0.1.4
+$ ./configure --prefix=/usr/local
+$ make
+$ make install
+
+$ wget http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p286.tar.gz
+$ tar xzvf ruby-1.9.3-p286.tar.gz
+$ cd ruby-1.9.3-p286
+$ ./configure --prefix=/usr/local --enable-shared --disable-install-doc --with-opt-dir=/usr/local/lib
+$ make
+$ make install
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Archie</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-29T17:34:00+08:00" pubdate data-updated="true">Oct 29<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>Ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/10/30/san-zhong-shen-fen/" title="Next Post: 三重身份">三重身份 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/python'>python (1)</a></li><li><a href='/blog/categories/ruby'>Ruby (1)</a></li><li><a href='/blog/categories/读书'>读书 (1)</a></li></ul>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/31/shi-yong-doctestce-shi-zhong-zai-dict-dot-sefdefaultfang-fa/">使用doctest测试重载dict.sefdefault方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/30/san-zhong-shen-fen/">三重身份</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/29/macosxia-an-zhuang-ruby-1-dot-9-3-p286/">MacOS下安装ruby-1.9.3-p286</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Archie -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
