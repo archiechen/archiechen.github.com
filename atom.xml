@@ -4,7 +4,7 @@
   <title><![CDATA[碎片]]></title>
   <link href="http://archiechen.github.com/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-10-31T18:32:32+08:00</updated>
+  <updated>2012-10-31T18:44:36+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -64,6 +64,12 @@
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#-*- coding:utf-8 -*-</span>
 </span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="sd">重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。</span>
@@ -76,6 +82,12 @@
 </span><span class='line'><span class="sd">&#39;default&#39;</span>
 </span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;newvalue&#39;)</span>
 </span><span class='line'><span class="sd">&#39;default&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;no_key&#39;)</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d[&#39;newkey&#39;]=&#39;newvalue&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;newkey&#39;)</span>
+</span><span class='line'><span class="sd">&#39;newvalue&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d[&#39;newkey&#39;]</span>
+</span><span class='line'><span class="sd">&#39;newvalue&#39;</span>
 </span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="k">class</span> <span class="nc">alwaysdefaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
 </span><span class='line'>    <span class="k">pass</span>

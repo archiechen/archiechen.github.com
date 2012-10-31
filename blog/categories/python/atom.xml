@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | 碎片]]></title>
   <link href="http://archiechen.github.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-10-31T18:32:32+08:00</updated>
+  <updated>2012-10-31T18:44:36+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -63,6 +63,12 @@
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;-&lt;</span><span class="n">em</span><span class="o">&gt;-</span> <span class="n">coding</span><span class="p">:</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span> <span class="o">-&lt;/</span><span class="n">em</span><span class="o">&gt;-&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
@@ -79,6 +85,12 @@
 </span><span class='line'><span class="s">&#39;default&#39;</span>
 </span><span class='line'><span class="s">d.setdefault(&#39;key&#39;,&#39;newvalue&#39;)</span>
 </span><span class='line'><span class="s">&#39;default&#39;</span>
+</span><span class='line'><span class="s">d.get(&#39;no_key&#39;)</span>
+</span><span class='line'><span class="s">d[&#39;newkey&#39;]=&#39;newvalue&#39;</span>
+</span><span class='line'><span class="s">d.get(&#39;newkey&#39;)</span>
+</span><span class='line'><span class="s">&#39;newvalue&#39;</span>
+</span><span class='line'><span class="s">d[&#39;newkey&#39;]</span>
+</span><span class='line'><span class="s">&#39;newvalue&#39;</span>
 </span><span class='line'><span class="s">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="k">class</span> <span class="nc">alwaysdefaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
