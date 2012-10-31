@@ -3,7 +3,7 @@ layout: post
 title: "使用doctest测试重载dict.sefdefault方法"
 date: 2012-10-31 17:58
 comments: true
-categories: python
+categories: Python
 ---
 
 为了避免字典中取出的值为None，通常会使用dict的setdefult方法：
@@ -42,7 +42,7 @@ dirs = task.setdefault('dirs',[])
 >>> d.get('newkey')
 'newvalue'
 >>> d['newkey']
-'newvalue'
+'newvalue'  
 '''
 class alwaysdefaultdict(dict):
     pass
