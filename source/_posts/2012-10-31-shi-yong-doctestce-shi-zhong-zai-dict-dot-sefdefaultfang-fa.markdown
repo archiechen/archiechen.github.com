@@ -37,6 +37,12 @@ dirs = task.setdefault('dirs',[])
 'default'
 >>> d.setdefault('key','newvalue')
 'default'
+>>> d.get('no_key')
+>>> d['newkey']='newvalue'
+>>> d.get('newkey')
+'newvalue'
+>>> d['newkey']
+'newvalue'
 '''
 class alwaysdefaultdict(dict):
     pass
