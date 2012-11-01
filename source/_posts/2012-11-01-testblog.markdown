@@ -1,0 +1,9 @@
+---
+layout: post
+title: "testblog"
+date: 2012-11-01 13:22
+comments: true
+categories: 
+---
+
+this is test.

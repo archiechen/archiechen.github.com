@@ -19,7 +19,7 @@ date_format: "ordinal"
 subscribe_rss: /atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
-email:
+email: chenyachuan@hotmail.com
 
 # ----------------------- #
 #    Jekyll & Plugins     #
@@ -59,9 +59,9 @@ default_asides: [custom/asides/category_list.html,asides/recent_posts.html, asid
 # ----------------------- #
 
 # Github repositories
-github_user:
+github_user: 
 github_repo_count: 0
-github_show_profile_link: true
+github_show_profile_link: false
 github_skip_forks: true
 
 # Twitter
@@ -90,7 +90,7 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
+disqus_short_name: 
 disqus_show_comment_count: false
 
 # Google Analytics
