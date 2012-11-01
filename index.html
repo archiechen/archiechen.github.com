@@ -9,8 +9,10 @@
   <meta name="author" content="Archie">
 
   
-  <meta name="description" content="this is test.
-">
+  <meta name="description" content="为了避免字典中取出的值为None，通常会使用dict的setdefult方法： 1
+2
+task = dict()
+urls = task.setdefult(&#39;urls&#39;,[]) 当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,42 +67,6 @@
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/11/01/testblog/">Testblog</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-11-01T13:22:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>this is test.</p>
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -405,10 +371,6 @@ $ make install
 </section><section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2012/11/01/testblog/">testblog</a>
-      </li>
     
       <li class="post">
         <a href="/blog/2012/10/31/shi-yong-doctestce-shi-zhong-zai-dict-dot-sefdefaultfang-fa/">使用doctest测试重载dict.sefdefault方法</a>
