@@ -4,7 +4,7 @@
   <title><![CDATA[碎片]]></title>
   <link href="http://archiechen.github.com/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-11-01T16:31:16+08:00</updated>
+  <updated>2012-11-01T17:47:13+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -14,87 +14,71 @@
 
   
   <entry>
+    <title type="html"><![CDATA[模式，模式，还是模式]]></title>
+    <link href="http://archiechen.github.com/blog/2012/11/01/mo-shi-%2Cmo-shi-%2Chuan-shi-mo-shi/"/>
+    <updated>2012-11-01T16:59:00+08:00</updated>
+    <id>http://archiechen.github.com/blog/2012/11/01/mo-shi-,mo-shi-,huan-shi-mo-shi</id>
+    <content type="html"><![CDATA[<p>《突破瓶颈》读到第六章，就开始阐述一个重要的概念：模式。书中的背景是作者和一家馅饼店老板娘的对话，并一直用麦当劳作为榜样。麦当劳作为馅饼店的榜样很合适，毕竟卖馅饼和卖汉堡包没啥本质区别，卖咖啡、卖炸鸡的也一样，可我从事的IT行业和他们是有本质的区别的呀，看得我心烦不已，硬着头皮读到了第十一章。书中反复称赞特许经营模式，甚至称其为转折性革命，的确这些采用特许经营模式的公司中很多都取得了成功，但很少见到有成功的IT企业在用这种模式啊？</p>
+
+<p>转念一想，作者的本意应该不会这么浅薄，他不是想引导读者去学习如何采用特许经营模式去办公司，重点应该是在“模式”上，无论是特许经营模式，还是XX模式，对于创业者来讲，重要的是要找到适合公司发展的模式。麦当劳的成功，是模式的成功，不是因为他的汉堡物美价廉，也不是因为他的薯条比别人更加香脆，而是因为麦当劳的公司运作模式可以保证任何一家店的产品都是一样的，模式是可复制的，并且在这个模式下，公司是高效运作的。难道成功IT公司的模式也是可复制的吗？这里首先要明确模式是什么，他不是具体的规章制度，不是作息时间，不是办公装潢，不是统一着装；模式是一种做事的态度，一种文化氛围，甚至一种价值观，当公司所有员工的模式保持一致时，公司有了适合自己的模式。</p>
+
+<p>模式不是固定不变的，不同行业、不同环境的模式用法也不是固定的，模式是可以自我进化的，只有具备了自我完善的功能，公司才会持续发展，才不会依赖某个具体的管理者，而管理者们所要做的就是，保证模式的正常的运行，能够及时的修正错误。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[使用doctest测试重载dict.sefdefault方法]]></title>
     <link href="http://archiechen.github.com/blog/2012/10/31/shi-yong-doctestce-shi-zhong-zai-dict-dot-sefdefaultfang-fa/"/>
     <updated>2012-10-31T17:58:00+08:00</updated>
     <id>http://archiechen.github.com/blog/2012/10/31/shi-yong-doctestce-shi-zhong-zai-dict-dot-sefdefaultfang-fa</id>
-    <content type="html"><![CDATA[<p>为了避免字典中取出的值为None，通常会使用dict的setdefult方法：</p>
+    <content type="html"><![CDATA[<p>为了避免字典中取出的值为None，通常会使用dict的setdefult方法：
+{% codeblock lang:python%}
+task = dict()
+urls = task.setdefult(&#8216;urls&#8217;,[])
+{% endcodeblock %}
+当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：
+{% codeblock lang:python%}
+urls = task.get(&#8220;urls&#8221;) if task.get(&#8220;urls&#8221;) else []
+dirs = task.get(&#8220;dirs&#8221;) if task.get(&#8220;dirs&#8221;) else []
+{% endcodeblock %}
+代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：
+{% codeblock lang:python%}
+task = alwaysdefaultdict(task)
+urls = task.setdefault(&#8216;urls&#8217;,[])
+dirs = task.setdefault(&#8216;dirs&#8217;,[])
+{% endcodeblock %}</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">task</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-</span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefult</span><span class="p">(</span><span class="s">&#39;urls&#39;</span><span class="p">,[])</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：
+{% codeblock lang:python%}</p>
 
+<h1>-<em>- coding:utf-8 -</em>-</h1>
 
-<p>当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：</p>
+<p>&#8221;&#8217;
+重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;urls&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;urls&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-</span><span class='line'><span class="n">dirs</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dirs&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dirs&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-</span></code></pre></td></tr></table></div></figure>
+<blockquote><blockquote><blockquote><p>d = alwaysdefaultdict()
+d.setdefault(&#8216;key&#8217;,&#8221;)
+&#8221;
+d.setdefault(&#8216;key&#8217;,&#8217;default&#8217;)
+&#8216;default&#8217;
+d.get(&#8216;key&#8217;)
+&#8216;default&#8217;
+d.setdefault(&#8216;key&#8217;,&#8217;newvalue&#8217;)
+&#8216;default&#8217;
+d.get(&#8216;no_key&#8217;)
+d[&#8216;newkey&#8217;]=&#8217;newvalue&#8217;
+d.get(&#8216;newkey&#8217;)
+&#8216;newvalue&#8217;
+d[&#8216;newkey&#8217;]
+&#8216;newvalue&#8217;<br/>
+&#8221;&#8217;
+class alwaysdefaultdict(dict):</p>
 
+<pre><code>pass
+</code></pre>
 
-<p>代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">task</span> <span class="o">=</span> <span class="n">alwaysdefaultdict</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
-</span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&#39;urls&#39;</span><span class="p">,[])</span>
-</span><span class='line'><span class="n">dirs</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&#39;dirs&#39;</span><span class="p">,[])</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#-*- coding:utf-8 -*-</span>
-</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
-</span><span class='line'><span class="sd">重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d = alwaysdefaultdict()</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;&#39;)</span>
-</span><span class='line'><span class="sd">&#39;&#39;</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;default&#39;)</span>
-</span><span class='line'><span class="sd">&#39;default&#39;</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;key&#39;)</span>
-</span><span class='line'><span class="sd">&#39;default&#39;</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;newvalue&#39;)</span>
-</span><span class='line'><span class="sd">&#39;default&#39;</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;no_key&#39;)</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d[&#39;newkey&#39;]=&#39;newvalue&#39;</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;newkey&#39;)</span>
-</span><span class='line'><span class="sd">&#39;newvalue&#39;</span>
-</span><span class='line'><span class="sd">&gt;&gt;&gt; d[&#39;newkey&#39;]</span>
-</span><span class='line'><span class="sd">&#39;newvalue&#39;  </span>
-</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">alwaysdefaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-</span><span class='line'>    <span class="k">pass</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这时候执行测试的结果是：</p>
+<p>{% endcodeblock %}
+这时候执行测试的结果是：</p>
 
 <pre><code>$ nosetests --with-doctest alwaysdefaultdict.py
 F
@@ -123,40 +107,14 @@ Got:
     ''
 ----------------------------------------------------------------------
 Ran 1 test in 0.035s
+</code></pre></blockquote></blockquote></blockquote>
 
-FAILED (failures=1)
+<pre><code>FAILED (failures=1)
 </code></pre>
 
-<p>然后实现代码逻辑，最后代码如下：</p>
-
-<div><script src='https://gist.github.com/3986136.js?file='></script>
-<noscript><pre><code>#-*- coding:utf-8 -*-
-'''
-    重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。
-&gt;&gt;&gt; d = alwaysdefaultdict()
-&gt;&gt;&gt; d.setdefault('key','')
-''
-&gt;&gt;&gt; d.setdefault('key','default')
-'default'
-&gt;&gt;&gt; d.get('key')
-'default'
-&gt;&gt;&gt; d.setdefault('key','newvalue')
-'default'
-'''
-
-
-class alwaysdefaultdict(dict):
-    def setdefault(self, key, defaultvalue):
-        if self.has_key(key):
-            if self.get(key):
-                return self.get(key)
-            else:
-                del self[key]
-        return super(alwaysdefaultdict, self).setdefault(key, defaultvalue)
-</code></pre></noscript></div>
-
-
-<p>执行doctest的结果：</p>
+<p>然后实现代码逻辑，最后代码如下：
+{% gist 3986136 %}
+执行doctest的结果：</p>
 
 <pre><code>$ nosetests --with-doctest alwaysdefaultdict.py
 .

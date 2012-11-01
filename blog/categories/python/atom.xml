@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | 碎片]]></title>
   <link href="http://archiechen.github.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-11-01T16:31:16+08:00</updated>
+  <updated>2012-11-01T17:47:13+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -137,7 +137,7 @@ Ran 1 test in 0.035s
 <div><script src='https://gist.github.com/3986136.js?file='></script>
 <noscript><pre><code>#-*- coding:utf-8 -*-
 '''
-    重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。
+重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。
 &gt;&gt;&gt; d = alwaysdefaultdict()
 &gt;&gt;&gt; d.setdefault('key','')
 ''
@@ -147,6 +147,12 @@ Ran 1 test in 0.035s
 'default'
 &gt;&gt;&gt; d.setdefault('key','newvalue')
 'default'
+&gt;&gt;&gt; d.get('no_key')
+&gt;&gt;&gt; d['newkey']='newvalue'
+&gt;&gt;&gt; d.get('newkey')
+'newvalue'
+&gt;&gt;&gt; d['newkey']
+'newvalue'
 '''
 
 
@@ -157,8 +163,7 @@ class alwaysdefaultdict(dict):
                 return self.get(key)
             else:
                 del self[key]
-        return super(alwaysdefaultdict, self).setdefault(key, defaultvalue)
-</code></pre></noscript></div>
+        return super(alwaysdefaultdict, self).setdefault(key, defaultvalue)</code></pre></noscript></div>
 
 执行doctest的结果：</p>
 
