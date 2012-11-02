@@ -12,11 +12,14 @@ task = dict()
 urls = task.setdefult('urls',[])
 {% endcodeblock %}
 当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：
+
 {% codeblock lang:python%}
 urls = task.get("urls") if task.get("urls") else []
 dirs = task.get("dirs") if task.get("dirs") else []
 {% endcodeblock %}
+
 代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：
+
 {% codeblock lang:python%}
 task = alwaysdefaultdict(task)
 urls = task.setdefault('urls',[])
@@ -24,6 +27,7 @@ dirs = task.setdefault('dirs',[])
 {% endcodeblock %}
 
 重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：
+
 {% codeblock lang:python%}
 #-*- coding:utf-8 -*-
 '''
@@ -47,6 +51,7 @@ dirs = task.setdefault('dirs',[])
 class alwaysdefaultdict(dict):
     pass
 {% endcodeblock %}
+
 这时候执行测试的结果是：
     $ nosetests --with-doctest alwaysdefaultdict.py
     F
