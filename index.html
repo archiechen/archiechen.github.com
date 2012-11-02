@@ -133,54 +133,83 @@
   </header>
 
 
-  <div class="entry-content"><p>为了避免字典中取出的值为None，通常会使用dict的setdefult方法：
-{% codeblock lang:python%}
-task = dict()
-urls = task.setdefult(&#8216;urls&#8217;,[])
-{% endcodeblock %}
-当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：
-{% codeblock lang:python%}
-urls = task.get(&#8220;urls&#8221;) if task.get(&#8220;urls&#8221;) else []
-dirs = task.get(&#8220;dirs&#8221;) if task.get(&#8220;dirs&#8221;) else []
-{% endcodeblock %}
-代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：
-{% codeblock lang:python%}
-task = alwaysdefaultdict(task)
-urls = task.setdefault(&#8216;urls&#8217;,[])
-dirs = task.setdefault(&#8216;dirs&#8217;,[])
-{% endcodeblock %}</p>
+  <div class="entry-content"><p>为了避免字典中取出的值为None，通常会使用dict的setdefult方法：</p>
 
-<p>重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：
-{% codeblock lang:python%}</p>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">task</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefult</span><span class="p">(</span><span class="s">&#39;urls&#39;</span><span class="p">,[])</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h1>-<em>- coding:utf-8 -</em>-</h1>
 
-<p>&#8221;&#8217;
-重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。</p>
+<p>当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：</p>
 
-<blockquote><blockquote><blockquote><p>d = alwaysdefaultdict()
-d.setdefault(&#8216;key&#8217;,&#8221;)
-&#8221;
-d.setdefault(&#8216;key&#8217;,&#8217;default&#8217;)
-&#8216;default&#8217;
-d.get(&#8216;key&#8217;)
-&#8216;default&#8217;
-d.setdefault(&#8216;key&#8217;,&#8217;newvalue&#8217;)
-&#8216;default&#8217;
-d.get(&#8216;no_key&#8217;)
-d[&#8216;newkey&#8217;]=&#8217;newvalue&#8217;
-d.get(&#8216;newkey&#8217;)
-&#8216;newvalue&#8217;
-d[&#8216;newkey&#8217;]
-&#8216;newvalue&#8217;<br/>
-&#8221;&#8217;
-class alwaysdefaultdict(dict):</p>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;urls&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;urls&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+</span><span class='line'><span class="n">dirs</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dirs&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dirs&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<pre><code>pass
-</code></pre>
 
-<p>{% endcodeblock %}
-这时候执行测试的结果是：</p>
+<p>代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">task</span> <span class="o">=</span> <span class="n">alwaysdefaultdict</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&#39;urls&#39;</span><span class="p">,[])</span>
+</span><span class='line'><span class="n">dirs</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&#39;dirs&#39;</span><span class="p">,[])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#-*- coding:utf-8 -*-</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d = alwaysdefaultdict()</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;&#39;)</span>
+</span><span class='line'><span class="sd">&#39;&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;default&#39;)</span>
+</span><span class='line'><span class="sd">&#39;default&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;key&#39;)</span>
+</span><span class='line'><span class="sd">&#39;default&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.setdefault(&#39;key&#39;,&#39;newvalue&#39;)</span>
+</span><span class='line'><span class="sd">&#39;default&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;no_key&#39;)</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d[&#39;newkey&#39;]=&#39;newvalue&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d.get(&#39;newkey&#39;)</span>
+</span><span class='line'><span class="sd">&#39;newvalue&#39;</span>
+</span><span class='line'><span class="sd">&gt;&gt;&gt; d[&#39;newkey&#39;]</span>
+</span><span class='line'><span class="sd">&#39;newvalue&#39;  </span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">alwaysdefaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这时候执行测试的结果是：</p>
 
 <pre><code>$ nosetests --with-doctest alwaysdefaultdict.py
 F
@@ -209,14 +238,45 @@ Got:
     ''
 ----------------------------------------------------------------------
 Ran 1 test in 0.035s
-</code></pre></blockquote></blockquote></blockquote>
 
-<pre><code>FAILED (failures=1)
+FAILED (failures=1)
 </code></pre>
 
-<p>然后实现代码逻辑，最后代码如下：
-{% gist 3986136 %}
-执行doctest的结果：</p>
+<p>然后实现代码逻辑，最后代码如下：</p>
+
+<div><script src='https://gist.github.com/3986136.js?file='></script>
+<noscript><pre><code>#-*- coding:utf-8 -*-
+'''
+重载setdefault方法，当key存在，并且value为空字符串或None时，也会设置为defaultvalue。
+&gt;&gt;&gt; d = alwaysdefaultdict()
+&gt;&gt;&gt; d.setdefault('key','')
+''
+&gt;&gt;&gt; d.setdefault('key','default')
+'default'
+&gt;&gt;&gt; d.get('key')
+'default'
+&gt;&gt;&gt; d.setdefault('key','newvalue')
+'default'
+&gt;&gt;&gt; d.get('no_key')
+&gt;&gt;&gt; d['newkey']='newvalue'
+&gt;&gt;&gt; d.get('newkey')
+'newvalue'
+&gt;&gt;&gt; d['newkey']
+'newvalue'
+'''
+
+
+class alwaysdefaultdict(dict):
+    def setdefault(self, key, defaultvalue):
+        if self.has_key(key):
+            if self.get(key):
+                return self.get(key)
+            else:
+                del self[key]
+        return super(alwaysdefaultdict, self).setdefault(key, defaultvalue)</code></pre></noscript></div>
+
+
+<p>执行doctest的结果：</p>
 
 <pre><code>$ nosetests --with-doctest alwaysdefaultdict.py
 .

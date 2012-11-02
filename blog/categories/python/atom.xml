@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | 碎片]]></title>
   <link href="http://archiechen.github.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-11-01T17:47:13+08:00</updated>
+  <updated>2012-11-02T11:24:16+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -24,14 +24,17 @@
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">task</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 </span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefult</span><span class="p">(</span><span class="s">&#39;urls&#39;</span><span class="p">,[])</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+当字典中存在key时，无论value是否为None，setdefault方法都会忽略default值，直接返回value。为了避免这种情况，引入了一段重复代码逻辑，每次取一个key都要这样写：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;urls&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;urls&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
 </span><span class='line'><span class="n">dirs</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dirs&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;dirs&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>代码可读性下降了，决定采用采用子类化内建类型的方式重构。重构后代码如下：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">task</span> <span class="o">=</span> <span class="n">alwaysdefaultdict</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
@@ -39,8 +42,9 @@
 </span><span class='line'><span class="n">dirs</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&#39;dirs&#39;</span><span class="p">,[])</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>重构过程中，先写doctest，alwaysdefaultdict.py文件内容如下：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -98,8 +102,9 @@
 </span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-这时候执行测试的结果是：</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote></blockquote></blockquote>
+
+<p>这时候执行测试的结果是：</p>
 
 <pre><code>$ nosetests --with-doctest alwaysdefaultdict.py
 F
@@ -128,9 +133,8 @@ Got:
     ''
 ----------------------------------------------------------------------
 Ran 1 test in 0.035s
-</code></pre></blockquote></blockquote></blockquote>
 
-<pre><code>FAILED (failures=1)
+FAILED (failures=1)
 </code></pre>
 
 <p>然后实现代码逻辑，最后代码如下：
