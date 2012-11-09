@@ -4,7 +4,7 @@
   <title><![CDATA[碎片]]></title>
   <link href="http://archiechen.github.com/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-11-09T21:06:27+08:00</updated>
+  <updated>2012-11-09T21:14:42+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -18,7 +18,7 @@
     <link href="http://archiechen.github.com/blog/2012/11/09/bootstrap-plus-jquery-plus-jqueruishi-xian-tuo-zhuai-shi-ren-wu-bai-ban/"/>
     <updated>2012-11-09T17:59:00+08:00</updated>
     <id>http://archiechen.github.com/blog/2012/11/09/bootstrap-plus-jquery-plus-jqueruishi-xian-tuo-zhuai-shi-ren-wu-bai-ban</id>
-    <content type="html"><![CDATA[<p>bootstrap是一套Html+CSS+Javascript的轻量框架，可以很容易的实现美观的UI界面和动态效果，最近需要实现个拖拽效果，只用bootstrap没有现成的办法，就引入了jqueryui+jquery。基础页面样式引用了(http://twitter.github.com/bootstrap/examples/starter-template.html)。</p>
+    <content type="html"><![CDATA[<p>bootstrap是一套Html+CSS+Javascript的轻量框架，可以很容易的实现美观的UI界面和动态效果，最近需要实现个拖拽效果，只用bootstrap没有现成的办法，就引入了jqueryui+jquery。基础页面样式引用了<a href="http://twitter.github.com/bootstrap/examples/starter-template.html">bootstrap starter</a>。</p>
 
 <p>首先，把页面中引入的javascript和css都改成完整的URL，并加入jqueryui和jquery。</p>
 
