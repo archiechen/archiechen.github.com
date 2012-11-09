@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>bootstrap+jquery+jquerui实现拖拽式任务白板 - 碎片</title>
+  <meta name="author" content="Archie">
+
+  
+  <meta name="description" content="bootstrap是一套Html+CSS+Javascript的轻量框架，可以很容易的实现美观的UI界面和动态效果，最近需要实现个拖拽效果，只用bootstrap没有现成的办法，就引入了jqueryui+jquery。基础页面样式引用了(http://twitter.github.com/ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://archiechen.github.com/blog/2012/11/09/bootstrap-plus-jquery-plus-jqueruishi-xian-tuo-zhuai-shi-ren-wu-bai-ban/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="碎片" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">碎片</a></h1>
+  
+    <h2>记录点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:archiechen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Bootstrap+jquery+jquerui实现拖拽式任务白板</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-09T17:59:00+08:00" pubdate data-updated="true">Nov 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>bootstrap是一套Html+CSS+Javascript的轻量框架，可以很容易的实现美观的UI界面和动态效果，最近需要实现个拖拽效果，只用bootstrap没有现成的办法，就引入了jqueryui+jquery。基础页面样式引用了(http://twitter.github.com/bootstrap/examples/starter-template.html)。</p>
+
+<p>首先，把页面中引入的javascript和css都改成完整的URL，并加入jqueryui和jquery。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot;http://twitter.github.com/bootstrap/assets/css/bootstrap.css&quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot;http://twitter.github.com/bootstrap/assets/css/doc.css&quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot;http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css&quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot;http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css&quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span><span class="nt">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意js文件放在页面的最后，这样可以使页面加载更快。这里我只引入了一个了bootstrap.js。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://twitter.github.com/bootstrap/assets/js/jquery.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://code.jquery.com/ui/1.9.1/jquery-ui.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://twitter.github.com/bootstrap/assets/js/bootstrap.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后删除页面中Container原来的内容，换成我们需要的白板栏，共有三个状态栏：New、Progress和Done。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;new_tasks&quot;</span> <span class="na">class=</span><span class="s">&quot;cardbox&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;page-header&quot;</span><span class="nt">&gt;</span>New<span class="nt">&lt;/h4&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;progress_tasks&quot;</span>  <span class="na">class=</span><span class="s">&quot;cardbox&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;page-header&quot;</span><span class="nt">&gt;</span>Progress<span class="nt">&lt;/h4&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;done_tasks&quot;</span>  <span class="na">class=</span><span class="s">&quot;cardbox&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;page-header&quot;</span><span class="nt">&gt;</span>Done<span class="nt">&lt;/h4&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>cardbox是自定义的样式表，用来显示一个状态栏位。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.cardbox</span> <span class="p">{</span> <span class="k">border</span><span class="o">:</span><span class="m">1px</span> <span class="k">solid</span> <span class="m">#AAA</span><span class="p">;</span> <span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span> <span class="k">width</span><span class="o">:</span> <span class="m">31</span><span class="o">%</span><span class="p">;</span> <span class="k">min-height</span><span class="o">:</span> <span class="m">18em</span><span class="p">;</span> <span class="k">padding</span><span class="o">:</span> <span class="m">0.5em</span><span class="p">;}</span>
+</span><span class='line'><span class="nc">.cardbox</span> <span class="nt">h4</span> <span class="p">{</span><span class="k">margin</span><span class="o">:</span> <span class="m">0px</span><span class="p">;}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>加上样式后是这样的：</p>
+
+<p><img src="http://archiechen.github/images/bootstrap.png" alt="效果图" /></p>
+
+<p>增加两个个卡片，这里使用html中的ul和li元素实现，不过要调整一下样式表，li元素用了样式ui-helper-reset，这是jqueryui支持的，目的是不显示列表前的原点儿。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;cardbox&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;page-header&quot;</span><span class="nt">&gt;</span>New<span class="nt">&lt;/h4&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;ui-helper-reset&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;li&gt;&lt;h5&gt;</span>在弹出窗口中输入任务信息，点击save按钮保存到数据库。<span class="nt">&lt;/h5&gt;&lt;/li&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;li&gt;&lt;h5&gt;</span>任务卡片可以在状态栏之间拖拽。<span class="nt">&lt;/h5&gt;&lt;/li&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>要增加一些css，控制任务卡片大小、内外边距以及拖拽时的鼠标图标。custom-state-active一会儿会用到，当状态栏允许放入时会变色。：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.cardbox</span> <span class="p">{</span><span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#AAA</span><span class="p">;</span><span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span><span class="k">margin-left</span><span class="o">:</span> <span class="m">10px</span><span class="p">;</span><span class="k">min-height</span><span class="o">:</span> <span class="m">46em</span><span class="p">;</span><span class="k">padding-left</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span> <span class="k">width</span><span class="o">:</span> <span class="m">31</span><span class="o">%</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="nc">.cardbox</span> <span class="nt">h4</span> <span class="p">{</span> <span class="k">line-height</span><span class="o">:</span> <span class="m">16px</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0.4em</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="nc">.cardbox</span> <span class="nt">h5</span> <span class="p">{</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0.1em</span> <span class="m">0.1em</span> <span class="m">0</span> <span class="m">0.1em</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.cardbox.custom-state-active</span> <span class="p">{</span> <span class="k">background</span><span class="o">:</span> <span class="m">#eee</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="nc">.cardbox</span> <span class="nt">li</span> <span class="p">{</span><span class="k">background-color</span><span class="o">:</span> <span class="nb">white</span><span class="p">;</span><span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#AAA</span><span class="p">;</span><span class="k">color</span><span class="o">:</span> <span class="m">#222</span><span class="p">;</span><span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span><span class="k">height</span><span class="o">:</span> <span class="m">84px</span><span class="p">;</span><span class="k">list-style</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span><span class="k">margin</span><span class="o">:</span> <span class="m">0.3em</span><span class="p">;</span><span class="k">padding</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span><span class="k">width</span><span class="o">:</span> <span class="m">164px</span><span class="p">;}</span>
+</span><span class='line'><span class="nc">.cardbox</span> <span class="nt">li</span> <span class="nt">a</span> <span class="p">{</span> <span class="k">cursor</span><span class="o">:</span> <span class="n">move</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0.4em</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="nc">.cardbox</span> <span class="nt">li</span> <span class="nt">p</span> <span class="p">{</span> <span class="k">float</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">10px</span><span class="p">;</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>样式加好后，可以写js了，在页面的最后加上javascript块，先允许New中的任务卡片可以拖拽，具体参数参考<a href="http://api.jqueryui.com/draggable/">jqueryui文档</a>：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">$new_tasks</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;#new_tasks&quot;</span> <span class="p">),</span>
+</span><span class='line'>    <span class="nx">$progress_tasks</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;#progress_tasks&quot;</span> <span class="p">),</span>
+</span><span class='line'>    <span class="nx">$done_tasks</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;#done_tasks&quot;</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="nx">$new_tasks</span> <span class="p">).</span><span class="nx">draggable</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">revert</span><span class="o">:</span> <span class="s2">&quot;invalid&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">containment</span><span class="o">:</span> <span class="s2">&quot;document&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">helper</span><span class="o">:</span> <span class="s2">&quot;clone&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">cursor</span><span class="o">:</span> <span class="s2">&quot;move&quot;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在任务卡片可以拖动了，但是还不能放到其他的状态栏目里，还需要设置其他栏目允许放置。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$progress_tasks</span><span class="p">.</span><span class="nx">droppable</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">accept</span><span class="o">:</span> <span class="s2">&quot;#new_tasks li&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">activeClass</span><span class="o">:</span> <span class="s2">&quot;ui-state-highlight&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">drop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">move_item</span><span class="p">(</span> <span class="nx">ui</span><span class="p">.</span><span class="nx">draggable</span> <span class="p">,</span> <span class="nx">$progress_tasks</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">move_item</span><span class="p">(</span> <span class="nx">$item</span><span class="p">,</span> <span class="nx">$tasks</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">$item</span><span class="p">.</span><span class="nx">fadeOut</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">$list</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;ul&quot;</span><span class="p">,</span> <span class="nx">$tasks</span> <span class="p">).</span><span class="nx">length</span> <span class="o">?</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;ul&quot;</span><span class="p">,</span> <span class="nx">$tasks</span> <span class="p">)</span> <span class="o">:</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;&lt;ul class=&#39;ui-helper-reset&#39;/&gt;&quot;</span> <span class="p">).</span><span class="nx">appendTo</span><span class="p">(</span> <span class="nx">$tasks</span> <span class="p">);</span>
+</span><span class='line'>        <span class="nx">$item</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span> <span class="nx">$list</span> <span class="p">).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>accept参数指定了那些元素可以被放入该栏目，这里允许New状态的任务卡放入。move_item函数负责将拖拽的元素从原栏目放入新栏目，如果新栏目中不存在ul元素，则创建一个，move_item函数在将卡片拖拽到Progress栏目中，释放鼠标时触发调用drop。按照这个逻辑，设置Done状态栏，只允许拖入Progress状态栏中的任务卡。此时拖拽New状态时，将不能放入Done状态栏。
+为了可以将人物卡片重新放回New状态，需要设置New状态栏允许放置,并设置Progress状态和Done状态都可以拖入。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$new_tasks</span><span class="p">.</span><span class="nx">droppable</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">accept</span><span class="o">:</span> <span class="s2">&quot;#progress_tasks li,#done_tasks li&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">activeClass</span><span class="o">:</span> <span class="s2">&quot;ui-state-highlight&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">drop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">move_item</span><span class="p">(</span> <span class="nx">ui</span><span class="p">.</span><span class="nx">draggable</span> <span class="p">,</span> <span class="nx">$new_tasks</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完整代码在这里<a href="https://gist.github.com/4045555">Gist</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Archie</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-09T17:59:00+08:00" pubdate data-updated="true">Nov 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/jquery/'>jquery</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/11/05/oobootcamp-season-one-01/" title="Previous Post: OOBootcamp Season One 01">&laquo; OOBootcamp Season One 01</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/javascript'>javascript (2)</a></li><li><a href='/blog/categories/jquery'>jquery (1)</a></li><li><a href='/blog/categories/oobootcamp'>OOBootcamp (1)</a></li><li><a href='/blog/categories/python'>Python (1)</a></li><li><a href='/blog/categories/ruby'>Ruby (1)</a></li><li><a href='/blog/categories/读书'>读书 (3)</a></li></ul>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/11/09/bootstrap-plus-jquery-plus-jqueruishi-xian-tuo-zhuai-shi-ren-wu-bai-ban/">bootstrap+jquery+jquerui实现拖拽式任务白板</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/05/oobootcamp-season-one-01/">OOBootcamp Season One 01</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/03/tu-po-ping-jing-%2Ctu-po-zi-ji/">突破瓶颈，突破自己</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/01/mo-shi-%2Cmo-shi-%2Chuan-shi-mo-shi/">模式，模式，还是模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/31/shi-yong-doctestce-shi-zhong-zai-dict-dot-sefdefaultfang-fa/">使用doctest测试重载dict.sefdefault方法</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Archie -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'archiesfragment';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://archiechen.github.com/blog/2012/11/09/bootstrap-plus-jquery-plus-jqueruishi-xian-tuo-zhuai-shi-ren-wu-bai-ban/';
+        var disqus_url = 'http://archiechen.github.com/blog/2012/11/09/bootstrap-plus-jquery-plus-jqueruishi-xian-tuo-zhuai-shi-ren-wu-bai-ban/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
