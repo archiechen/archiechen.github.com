@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | 碎片]]></title>
   <link href="http://archiechen.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-11-09T21:03:19+08:00</updated>
+  <updated>2012-11-09T21:06:27+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -98,7 +98,7 @@ cardbox是自定义的样式表，用来显示一个状态栏位。
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 加上样式后是这样的：</p>
 
-<p><img src="http://archiechen.github/images/bootstrap.png" alt="效果图" /></p>
+<p><img src="http://archiechen.github.com/images/bootstrap.png" alt="效果图" /></p>
 
 <p>增加两个个卡片，这里使用html中的ul和li元素实现，不过要调整一下样式表，li元素用了样式ui-helper-reset，这是jqueryui支持的，目的是不显示列表前的原点儿。
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
