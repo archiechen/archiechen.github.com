@@ -4,7 +4,7 @@
   <title><![CDATA[碎片]]></title>
   <link href="http://archiechen.github.com/atom.xml" rel="self"/>
   <link href="http://archiechen.github.com/"/>
-  <updated>2012-11-09T21:14:42+08:00</updated>
+  <updated>2012-12-19T18:27:21+08:00</updated>
   <id>http://archiechen.github.com/</id>
   <author>
     <name><![CDATA[Archie]]></name>
@@ -12,6 +12,448 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[使用Backbone重构拖拽式任务白板]]></title>
+    <link href="http://archiechen.github.com/blog/2012/12/17/shi-yong-backbonezhong-gou-tuo-zhuai-shi-ren-wu-bai-ban/"/>
+    <updated>2012-12-17T17:16:00+08:00</updated>
+    <id>http://archiechen.github.com/blog/2012/12/17/shi-yong-backbonezhong-gou-tuo-zhuai-shi-ren-wu-bai-ban</id>
+    <content type="html"><![CDATA[<p>上次用jqueryui实现了一个可以拖拽的任务白板，实际项目中随着功能逐渐增多，传统的js组织形式就很凌乱了，这个时候要引入前端js框架，来保证代码的质量，尤其是清晰度和扩展性。前端js的框架可选的很多，比如backbone.js、ember.js等，本文采用的是backbone。使用backbone先要引入两个js文件，一个是underscore.js，这个文件是backbone框架依赖的基础库，另外一个是backbone.js本身。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://backbonejs.org/test/vendor/underscore.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;http://backbonejs.org/backbone.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重构之前先分析一下页面内容，需要有以下几个元素：</p>
+
+<ul>
+<li>模型：
+
+<ul>
+<li>任务</li>
+<li>任务集合</li>
+</ul>
+</li>
+<li>视图：
+
+<ul>
+<li>任务卡</li>
+<li>任务栏</li>
+</ul>
+</li>
+</ul>
+
+
+<p>使用继承Backbone.Model创建Task类作为模型,继承Bankbone.View创建TaskCard作为视图。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Task</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">TaskCard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>利用javascript是动态语言的特性，模型暂时不需要添加属性和方法，现在需要定义TaskCard视图的属性，一个Card是一个li元素，视图渲染时，会使用Model填充内容,填充的内容定义为一个模板（template）。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">TaskCard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="c1">//卡片模板，这里可以更复杂。</span>
+</span><span class='line'>    <span class="nx">template</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;&lt;h5&gt;&lt;%-title%&gt;&lt;/h5&gt;&#39;</span><span class="p">),</span>
+</span><span class='line'>    <span class="c1">//使用模板和模型渲染卡片成html。</span>
+</span><span class='line'>    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()));</span>
+</span><span class='line'>      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在可以使用Task和TaskCard在页面上显示任务卡片了，我们可以动态的创建任务卡片。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//创建任务对象</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">task1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Task</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="o">:</span><span class="s1">&#39;在弹出窗口中输入任务信息，点击save按钮保存到数据库。&#39;</span><span class="p">});</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">task2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Task</span><span class="p">({</span><span class="s1">&#39;title&#39;</span><span class="o">:</span><span class="s1">&#39;任务卡片可以在状态栏之间拖拽。&#39;</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//创建卡片对象</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">taskCard1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskCard</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span><span class="nx">task1</span><span class="p">});</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">taskCard2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskCard</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span><span class="nx">task2</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//将卡片放到NEW状态的任务栏中</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskcards_ul&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">taskCard1</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">$el</span><span class="p">);</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskcards_ul&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">taskCard2</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">$el</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下一步将任务栏设计为一个视图类，方便进行动态扩展。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">TaskBoard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nx">className</span><span class="o">:</span><span class="s2">&quot;cardbox&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="c1">//使用预先定义的模板</span>
+</span><span class='line'>  <span class="nx">template</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskboard-template&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()),</span>
+</span><span class='line'>  <span class="nx">initialize</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//使用一个对象渲染模板</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">name</span><span class="p">}));</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'><span class="c1">//创建一个名字为“New”的任务栏。</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">newTaskBoard</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskBoard</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span><span class="s1">&#39;New&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'><span class="c1">//将任务栏显示到页面中</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskboards&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">newTaskBoard</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在页面上只有一个New状态的任务栏了。这里用到了一个模板taskboard-template，是预先在html中定义好的一段html代码，underscore.js使用JSON格式的Object对模板进行渲染，&lt;%%>之间用Object的属性填充。Taskboard的模板如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/template&quot;</span> <span class="na">id=</span><span class="s">&quot;taskboard-template&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="nx">h4</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;page-header&quot;</span><span class="o">&gt;&lt;%-</span><span class="nx">name</span><span class="o">%&gt;&lt;</span><span class="err">/h4&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="nx">ul</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;taskcards_ul&quot;</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;ui-helper-reset&quot;</span><span class="o">&gt;&lt;</span><span class="err">/ul&gt;</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再添加两个任务栏，分别是Progress和Done。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">progresssTaskBoard</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskBoard</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span><span class="s1">&#39;Progress&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">doneTaskBoard</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskBoard</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">name</span><span class="o">:</span><span class="s1">&#39;Done&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//将任务栏显示到页面中</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskboards&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">progresssTaskBoard</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+</span><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskboards&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">doneTaskBoard</span><span class="p">.</span><span class="nx">$el</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在三个状态栏都是动态创建的，加入任务卡的代码显得很不协调，因为是直接通过jquery将TaskCard放入到状态栏中，现在需要引入Collection类了。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">TaskList</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>  <span class="nx">model</span><span class="o">:</span> <span class="nx">Task</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Collection是一组Model的集合，并提供了add、remove等集合操作的方法，接下来创建一个New状态的TaskList，并且和New状态的任务栏关联起来。修改之前的代码，让Taskboard可以和TaskList绑定，并监听TaskList的add事件，当add事件被触发时，调用Taskboard的addOne方法，创建一个任务卡并放到状态栏中。同时删除创建任务卡的代码，修改之前添加任务卡的逻辑，不需要在最外层创建TaskCard了。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="kd">var</span> <span class="nx">TaskBoard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>      <span class="nx">tagName</span><span class="o">:</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">className</span><span class="o">:</span><span class="s2">&quot;cardbox&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">template</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskboard-template&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()),</span>
+</span><span class='line'>      <span class="nx">initialize</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</span><span class='line'>        <span class="c1">//绑定一个任务集合</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">tasks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">tasks</span><span class="o">||</span><span class="k">new</span> <span class="nx">TaskList</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">//监听任务集合的add事件</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">tasks</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">addOne</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">name</span><span class="p">}));</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">taskcards</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#taskcards_ul&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="nx">addOne</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">task</span><span class="p">){</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">taskcard</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskCard</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span><span class="nx">task</span><span class="p">});</span>
+</span><span class='line'>        <span class="nx">taskcard</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">$el</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">taskcards</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="c1">//创建任务集合</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">newTasks</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskList</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">newTaskBoard</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskBoard</span><span class="p">({</span>
+</span><span class='line'>      <span class="nx">name</span><span class="o">:</span><span class="s1">&#39;New&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="c1">//设置任务栏关联的任务集合</span>
+</span><span class='line'>      <span class="nx">tasks</span><span class="o">:</span><span class="nx">newTasks</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//将卡片放到NEW状态的任务栏中</span>
+</span><span class='line'>    <span class="nx">newTasks</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">task1</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">newTasks</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">task2</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>页面布局调整完后加入拖拽效果，先套用之前的代码逻辑，只是将其转移到TaskCard和TaskBoard中。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="kd">var</span> <span class="nx">TaskCard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>      <span class="c1">//类构造函数</span>
+</span><span class='line'>      <span class="nx">initialize</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="c1">//设置任务卡可以被拖拽，不需要每次render时重复设置，在这里只会设置一次。</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">draggable</span><span class="p">({</span>
+</span><span class='line'>            <span class="nx">revert</span><span class="o">:</span> <span class="s2">&quot;invalid&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">containment</span><span class="o">:</span> <span class="s2">&quot;document&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">helper</span><span class="o">:</span> <span class="s2">&quot;clone&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">cursor</span><span class="o">:</span> <span class="s2">&quot;move&quot;</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">TaskBoard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>      <span class="nx">initialize</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>        <span class="c1">//使用闭包保持现在的上下文</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">//设置当前状态栏被拖入时的行为。</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">droppable</span><span class="p">({</span>
+</span><span class='line'>            <span class="nx">activeClass</span><span class="o">:</span> <span class="s2">&quot;ui-state-highlight&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">drop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">$card</span> <span class="o">=</span> <span class="nx">ui</span><span class="p">.</span><span class="nx">draggable</span><span class="p">;</span>
+</span><span class='line'>                <span class="nx">$card</span><span class="p">.</span><span class="nx">fadeOut</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">$card</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span> <span class="nx">that</span><span class="p">.</span><span class="nx">taskcards</span> <span class="p">).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>                <span class="c1">//输出拖拽之后，任务集合的变化。</span>
+</span><span class='line'>                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">tasks</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">newTasks</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>    <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在页面上可以实现拖拽效果了，但我们观察浏览器的console发现，拖拽之后，任务集合的状态并没有变，只是视图变了，模型并没有变。我们希望拖拽结束后，被拖拽的Task从原来的集合中删除，并加入到拖入栏目关联的集合中。在drop函数中无法直接获取Task对象，可以利用模型的cid是唯一特点，将cid保存在li元素的id属性中，然后在drop时取出id属性，根据这个id遍历所有任务集合，获取Task对象。修改后代码如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="c1">//创建任务集合，三个都要在外部创建，并初始化到对应的TaskBoard中。</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">newTasks</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskList</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">progressTasks</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskList</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">doneTasks</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TaskList</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">TaskCard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>      <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()));</span>
+</span><span class='line'>        <span class="c1">//把li元素的id属性设置为模型的cid</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">cid</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">TaskBoard</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>      <span class="nx">initialize</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">droppable</span><span class="p">({</span>
+</span><span class='line'>            <span class="nx">activeClass</span><span class="o">:</span> <span class="s2">&quot;ui-state-highlight&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">drop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">cid</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">ui</span><span class="p">.</span><span class="nx">draggable</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">);</span>
+</span><span class='line'>                <span class="nx">ui</span><span class="p">.</span><span class="nx">draggable</span><span class="p">.</span><span class="nx">fadeOut</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="c1">//遍历所有任务集合</span>
+</span><span class='line'>                    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">([</span><span class="nx">newTasks</span><span class="p">,</span><span class="nx">progressTasks</span><span class="p">,</span><span class="nx">doneTasks</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">from</span><span class="p">){</span>
+</span><span class='line'>                      <span class="c1">//跳过当前状态栏的任务集合</span>
+</span><span class='line'>                      <span class="k">if</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">tasks</span><span class="o">!=</span><span class="nx">from</span><span class="p">){</span>
+</span><span class='line'>                        <span class="kd">var</span> <span class="nx">draggableTask</span> <span class="o">=</span> <span class="nx">from</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">cid</span><span class="p">);</span>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">draggableTask</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                          <span class="nx">from</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">draggableTask</span><span class="p">);</span>
+</span><span class='line'>                          <span class="nx">that</span><span class="p">.</span><span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">draggableTask</span><span class="p">);</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                      <span class="p">}</span>
+</span><span class='line'>                    <span class="p">});</span>
+</span><span class='line'>                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">tasks</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">newTasks</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>    <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在观察控制台输出，已经达到我们预期的效果了。其实代码还有重构空间，fadeOut行为应该绑定到任务卡上，为TaskCard自定义一个事件叫dropped，from.remove会触发TaskList的remove事件，在响应remove事件时，再触发一次task的dropped事件，就可以将fadout行为和TaskBorad解耦。重构后的最终代码参考：<a href="https://gist.github.com/4335764">Gist</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[bootstrap+jquery+jquerui实现拖拽式任务白板]]></title>
